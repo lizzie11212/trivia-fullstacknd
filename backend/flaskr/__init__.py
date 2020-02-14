@@ -12,30 +12,26 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
+  #Set up CORS. Allow '*' for origins.
+  CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-  '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-  '''
-  CORS(app, RESOURCE={r"*/api/*": {origins: '*'}})
-
-  '''
-  @TODO: Use the after_request decorator to set Access-Control-Allow
-  '''
+  #Use the after_request decorator to set Access-Control-Allow
   @app.after_request
   def after_request(response):
       response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
       response.headers.add('Access-Control-Allow-Headers', 'GET,POST,PATCH,DELETE,OPTIONS')
       return response
 
+  #Create an endpoint to handle GET requests for all available categories.
+  @app.route('/categories')
+  def all_categories():
+      categories = Category.query.all()
+      formatted_categories = [category.format() for category in categories]
 
-  '''
-  @TODO:
-  Create an endpoint to handle GET requests for all available categories.
-  '''
-  @app.route('/')
-  @cross_origin
-  def get_greeting()
-      return jsonify({'message':'Hellow, World!'})
+      return jsonify({
+        'success':True,
+        'categories': formatted_categories
+      })
 
 
   '''
